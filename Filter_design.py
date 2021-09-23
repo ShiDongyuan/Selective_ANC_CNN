@@ -60,7 +60,7 @@ class Filter_designer():
 if __name__ == "__main__":
     FILE_NAME_PATH = "Bandlimited_filter.mat"
     fs             = 16000 
-    level          = 4 
+    level          = 4 #4 
 
     F_vector = []
     for i in range(level):
@@ -70,6 +70,14 @@ if __name__ == "__main__":
     Filters = Filter_designer(filter_len=1024, F_vector= F_vector, fs=fs)
     Filters.__save_mat__(FILE_NAME_PATH)
     print(Filters.filter_num)
+#--------------------------------------------------------------------
+# Design own bandfilter 
+    from DataSet_construction_DesignBand import F_LEVEL
+    FILE_NAME_PATH1 = "DesignBand_filter_v1.mat"
+    Filters = Filter_designer(filter_len=1024, F_vector= F_LEVEL, fs=fs)
+    Filters.__save_mat__(FILE_NAME_PATH1)
+    print(Filters.filter_num)
+
     i = 0 
 
     

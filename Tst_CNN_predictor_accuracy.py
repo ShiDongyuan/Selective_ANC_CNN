@@ -35,10 +35,12 @@ if __name__ == "__main__":
     MATFILE_PATH     = 'Pre-train Control filter.mat'
     #----
     FILE_NAME_PATH   = "Bandlimited_filter.mat"
+    FILE_NAME_PATH   = "DesignBand_filter_v1.mat"
     MATFILE_PATH     = FILE_NAME_PATH
     #-----
     MODEL_PATH       = "feedforwardnet.pth"
     VALIDATTION_FILE = "testing_data"
+    VALIDATTION_FILE = "testing_data_v1"
     sheet            = "Index.csv"
     BATCH_SIZE       = 100
 
