@@ -39,6 +39,7 @@ if __name__ == "__main__":
     MATFILE_PATH     = FILE_NAME_PATH
     #-----
     MODEL_PATH       = "feedforwardnet.pth"
+    # MODEL_PATH       = "feedforwardnet_Nway_Finetuned.pth"
     VALIDATTION_FILE = "testing_data"
     VALIDATTION_FILE = "testing_data_v1"
     sheet            = "Index.csv"
