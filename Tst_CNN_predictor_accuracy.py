@@ -40,6 +40,7 @@ if __name__ == "__main__":
     #-----
     MODEL_PATH       = "feedforwardnet.pth"
     # MODEL_PATH       = "feedforwardnet_Nway_Finetuned.pth"
+    #MODEL_PATH       = 'feedforwardnet_LMSoftMax.pth'
     VALIDATTION_FILE = "testing_data"
     VALIDATTION_FILE = "testing_data_v1"
     sheet            = "Index.csv"
