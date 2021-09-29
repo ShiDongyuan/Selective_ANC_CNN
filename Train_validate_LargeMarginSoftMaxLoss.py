@@ -86,6 +86,41 @@ def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epoch
         print("----------------------------------")
     print("Finished trainning")
 
+#---------------------------------------------------------------------------------
+# Function : Training_predefined_model_by_LargMarginSoftMaxLoss (Coming from main)
+#---------------------------------------------------------------------------------
+def Training_predefined_model_by_LargMarginSoftMaxLoss(TRAINNING_DATA, VALIDATION_DATA, MODEL_Pth):
+    File_sheet = "Index.csv"
+    
+    train_data = MyNoiseDataset(TRAINNING_DATA, File_sheet)
+    valid_data = MyNoiseDataset(VALIDATION_DATA, File_sheet)
+    
+    train_dataloader = create_data_loader(train_data, BATCH_SIZE)
+    valid_dataloader = create_data_loader(valid_data,int(BATCH_SIZE/10))
+    
+    # construct model and assign it to device
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+    print(f"Using {device}")
+    
+    feed_forward_net  = OneD_CNN_LMSoftmax().to(device)
+    
+    loss_fn = losses.LargeMarginSoftmaxLoss(num_classes= 15, embedding_size= 15, margin = 3).to(device)
+    optimiser = torch.optim.Adam([{'params': feed_forward_net.parameters()},
+                                  {'params': loss_fn.parameters()}
+                                ],
+                                 lr=LEARNING_RATE)
+
+    # train model
+    train(feed_forward_net, train_dataloader, valid_dataloader, loss_fn, optimiser, device, EPOCHS)
+
+    # save model
+    torch.save(feed_forward_net.state_dict(), MODEL_Pth)
+    print("Trained feed forward net saved at " + MODEL_Pth)
+    
+
 if __name__ == "__main__":
     # ANNOTATIONS_FILE = "DATA_1\Index.csv"
     # VALIDATTION_FILE = "Validate_1\Index.csv"

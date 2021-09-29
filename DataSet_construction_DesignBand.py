@@ -194,7 +194,6 @@ class ClassID_Calculator:
 # Function     :   Generating Dataset as given frequency band (It comes from main function) 
 #-------------------------------------------------------------------------------------------
 def Generating_Dataset_as_Given_Frequencybands(N_sample, F_bands, Folder_name):
-    N_sample = 1000
     import progressbar
     bar = progressbar.ProgressBar(maxval=N_sample, \
         widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
