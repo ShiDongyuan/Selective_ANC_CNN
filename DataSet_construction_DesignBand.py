@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.signal as signal
-import matplotlib
+#import matplotlib
 import matplotlib.pyplot as plt
 
 import os
@@ -190,6 +190,33 @@ class ClassID_Calculator:
             SimlarityRatio.append(SimilarityRato(f_low, f_high, self.f_vector[ii][0],self.f_vector[ii][1]))
         ID = SimlarityRatio.index(max(SimlarityRatio))
         return ID, SimlarityRatio
+#------------------------------------------------------------------------------------------
+# Function     :   Generating Dataset as given frequency band (It comes from main function) 
+#-------------------------------------------------------------------------------------------
+def Generating_Dataset_as_Given_Frequencybands(N_sample, F_bands, Folder_name):
+    N_sample = 1000
+    import progressbar
+    bar = progressbar.ProgressBar(maxval=N_sample, \
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+    
+    Generator     = SoundGenerator(fs=16000, folder = Folder_name)
+    datasheet     = DatasetSheet(Folder_name,"Index.csv")
+    ID_calculator = ClassID_Calculator(F_bands)
+
+    bar.start()
+    for ii in range(N_sample):
+        f_star, f_end, filePath = Generator._construct_()
+        ID, SR                  = ID_calculator._get_ID_(f_low=f_star, f_high=f_end)
+        datasheet.add_data_to_file(filePath,ID)
+        
+        f_star, f_end, filePath = Generator._construct_A()
+        ID, SR                  = ID_calculator._get_ID_(f_low=f_star, f_high=f_end)
+        datasheet.add_data_to_file(filePath,ID)
+        bar.update(ii+1)
+    datasheet.flush()
+    bar.finish()
+
+#-------------------------------------------------------------------   
 
 if __name__ == "__main__":
     # Setting the progress bar for the trainning progress 

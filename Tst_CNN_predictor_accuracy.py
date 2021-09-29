@@ -18,9 +18,29 @@ def tst_accuracy_of_model(tst_data_loder, model):
         for signal_1d, target_1d in zip(input, target):
             batch_acc +=(model.predic_ID(signal_1d)==target_1d.numpy())
         acc = batch_acc/len(target)
-        print(f"The {i}-the iteration's accuracy is {acc}")
+        print(f"----------------------------------------")
+        print(f"The {i}-th iteration's accuracy is {acc}")
         accuracy_vec.append(acc)
     return accuracy_vec, sum(accuracy_vec)/len(accuracy_vec)
+
+#----------------------------------------------------------------
+# Function  : Testing accuracy of the predictor (coming from main)
+#----------------------------------------------------------------
+def Testing_model_accuracy(MODEL_PATH, MATFILE_PATH, VALIDATTION_FILE):
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+    print(f"Using {device}")
+    #
+    BATCH_SIZE       = 100
+    fs               = 16000
+    sheet            = "Index.csv"
+    CNN_classfier  = Filter_ID_predictor(MODEL_PATH, MATFILE_PATH, fs, device)
+    valid_data     = MyNoiseDataset(VALIDATTION_FILE,sheet)
+    valid_dataloader = create_data_loader(valid_data,BATCH_SIZE)
+    _, average_acc = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
+    print(f"The average accuracy is {average_acc}")
 
 #-----------------------------------------------------------------
 if __name__ == "__main__":
