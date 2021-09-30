@@ -19,6 +19,6 @@ if __name__ == '__main__':
     else:
         print("Data of " + Filter_mat_name + 'is existed !!!')
     
-    MODEL_PATH = "feedforwardnet.pth"
+    MODEL_PATH = "feedforwardnet_v1.pth"
     Testing_model_accuracy(MODEL_PATH=MODEL_PATH, MATFILE_PATH=Filter_mat_name, VALIDATTION_FILE=Folder_name_of_testing_data_set)
     

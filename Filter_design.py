@@ -62,6 +62,18 @@ def Boardband_Filter_Desgin_as_Given_Freqeuencybands(MAT_filename, F_bands, fs):
     print(Filters.filter_num)
 
 #-----------------------------------------------------------------------------------
+# Function : Broadband Filter design by give Frequency levels
+#-----------------------------------------------------------------------------------
+def Broadband_Filter_Design_as_Given_F_levles(MAT_filename, level, fs):
+    F_vector = []
+    for i in range(level):
+        F_vec, _    = frequencyband_design(i, fs)
+        F_vector   += F_vec
+
+    Filters = Filter_designer(filter_len=1024, F_vector= F_vector, fs=fs)
+    Filters.__save_mat__(MAT_filename)
+    print(f' There are {Filters.filter_num} pre-train filters has been created!')
+    
 #------------------->> Main() <<-----------------------
 #-----------------------------------------------------------------------------------
 if __name__ == "__main__":

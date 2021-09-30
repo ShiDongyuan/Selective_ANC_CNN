@@ -188,7 +188,33 @@ class ClassID_Calculator:
             SimlarityRatio.append(SimilarityRato(f_low, f_high, self.f_vector[ii][0],self.f_vector[ii][1]))
         ID = SimlarityRatio.index(max(SimlarityRatio))
         return ID, SimlarityRatio
-
+#--------------------------------------------------------------------------------------
+# Function : Generating Dataset as given frequency level (It comes from main function)
+#--------------------------------------------------------------------------------------
+def Generating_Dataset_as_Given_Frequencylevels(N_sample, level, Folder_name):
+    import progressbar
+    bar = progressbar.ProgressBar(maxval=N_sample, \
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+    file_name   = "Index.csv"
+    
+    Generator     = SoundGenerator(fs=16000, folder = Folder_name)
+    datasheet     = DatasetSheet(Folder_name,file_name)
+    ID_calculator = ClassID_Calculator(levels=level,fs=16000)
+    
+    bar.start()
+    for ii in range(N_sample):
+        f_star, f_end, filePath = Generator._construct_()
+        ID, SR                  = ID_calculator._get_ID_(f_low=f_star, f_high=f_end)
+        datasheet.add_data_to_file(filePath,ID)
+        
+        f_star, f_end, filePath = Generator._construct_A()
+        ID, SR                  = ID_calculator._get_ID_(f_low=f_star, f_high=f_end)
+        datasheet.add_data_to_file(filePath,ID)
+        bar.update(ii+1)
+    datasheet.flush()
+    bar.finish()
+    
+#--------------------------------------------------------------------------------------
 if __name__ == "__main__":
     # Setting the progress bar for the trainning progress 
     N_sample = 4000
