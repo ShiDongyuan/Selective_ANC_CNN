@@ -6,14 +6,15 @@ from torch.utils.data import DataLoader
 from MyDataLoader import MyNoiseDataset
 from ONED_CNN_LMSoftmax import OneD_CNN_LMSoftmax
 from sklearn.metrics import classification_report
+from Bcolors import bcolors
 #----------------------------------------------------------------------------
 
 from pytorch_metric_learning import losses
 from pytorch_metric_learning.utils.inference import LogitGetter
 #----------------------------------------------------------------------------
 BATCH_SIZE    = 250 
-EPOCHS        = 15 
-LEARNING_RATE = 0.001 
+EPOCHS        = 30 
+LEARNING_RATE = 0.03#0.001 
 
 def create_data_loader(train_data, batch_size):
     train_dataloader = DataLoader(train_data, batch_size)
@@ -89,7 +90,7 @@ def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epoch
 #---------------------------------------------------------------------------------
 # Function : Training_predefined_model_by_LargMarginSoftMaxLoss (Coming from main)
 #---------------------------------------------------------------------------------
-def Training_predefined_model_by_LargMarginSoftMaxLoss(TRAINNING_DATA, VALIDATION_DATA, MODEL_Pth):
+def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TRAINNING_DATA=None, VALIDATION_DATA=None, MODEL_Pth=None):
     File_sheet = "Index.csv"
     
     train_data = MyNoiseDataset(TRAINNING_DATA, File_sheet)
@@ -105,9 +106,15 @@ def Training_predefined_model_by_LargMarginSoftMaxLoss(TRAINNING_DATA, VALIDATIO
         device = "cpu"
     print(f"Using {device}")
     
-    feed_forward_net  = OneD_CNN_LMSoftmax().to(device)
-    
-    loss_fn = losses.LargeMarginSoftmaxLoss(num_classes= 15, embedding_size= 15, margin = 3).to(device)
+    if MODEL_STRUCTURE :
+        feed_forward_net  = MODEL_STRUCTURE.to(device)
+        embedding_size = 620
+        print(bcolors.OKCYAN + 'Using user defined CNN model.--->'+bcolors.ENDC)
+    else:
+        feed_forward_net  = OneD_CNN_LMSoftmax().to(device)
+        embedding_size = 15
+        print(bcolors.OKCYAN + 'Using program default CNN model.--->'+bcolors.ENDC)
+    loss_fn = losses.LargeMarginSoftmaxLoss(num_classes= 15, embedding_size= embedding_size, margin = 2).to(device)
     optimiser = torch.optim.Adam([{'params': feed_forward_net.parameters()},
                                   {'params': loss_fn.parameters()}
                                 ],
@@ -120,7 +127,7 @@ def Training_predefined_model_by_LargMarginSoftMaxLoss(TRAINNING_DATA, VALIDATIO
     torch.save(feed_forward_net.state_dict(), MODEL_Pth)
     print("Trained feed forward net saved at " + MODEL_Pth)
     
-
+#---------------------------------------------------------------------------------
 if __name__ == "__main__":
     # ANNOTATIONS_FILE = "DATA_1\Index.csv"
     # VALIDATTION_FILE = "Validate_1\Index.csv"

@@ -2,6 +2,7 @@ from DataSet_construction_v2 import Generating_Dataset_as_Given_Frequencylevels
 from Filter_design import Broadband_Filter_Design_as_Given_F_levles
 from Train_validate import Train_validate_predefined_CNN
 from Tst_CNN_predictor_accuracy import Testing_model_accuracy
+from Bcolors import bcolors
 import os
 
 #--------------------------------------------------------------------------------------------
@@ -33,6 +34,8 @@ if __name__ == '__main__':
         Train_validate_predefined_CNN(TRIAN_DATASET_FILE=Folder_name_list_of_data_set[0]
                                       , VALIDATION_DATASET_FILE=Folder_name_list_of_data_set[1]
                                       , MODEL_PTH=MODEL_PTH)
+    else:
+        print( bcolors.WARNING + MODEL_PTH + ' has aready been trained !' + bcolors.ENDC)
     
     # Testing the pre-tained CNN model based cosine similarity 
     print('=======================================================')
