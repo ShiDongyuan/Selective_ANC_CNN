@@ -16,7 +16,7 @@ import time
 #--------------------------------------------------------------
 BATCH_SIZE    = 1 
 EPOCHS        = 50
-LEARNING_RATE = 0.01 #0.001 
+LEARNING_RATE = 0.001 #0.001 0.002 0.0005
 
 #--------------------------------------------------------------
 # Function      :   create_data_loader()
@@ -75,6 +75,44 @@ def train(model, data_loader, loss_fn, optimiser, device, targ_input,epochs):
         print('----------------------------------------------------------------')
     print("Finished trainning")
 
+#---------------------------------------------------------------------------
+# Function : training and validating the n-way-m-shot cnn (coming from main)
+#----------------------------------------------------------------------------
+def Train_validate_Nway_main(PRETRAINED_MODEL=None, FILE_NAME_PATH=None, TRAININ_DATA_FILE=None, MODEL_PTH=None):
+    # System parameter configuration
+    FILE_sheet = "Index.csv"
+    fs         = 16000
+    
+    # construct model and assign it to device
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+    print(f"Using {device}")
+    
+    # Construing data loader
+    fine_tuning_data = MyNoiseDataset(TRAININ_DATA_FILE,FILE_sheet)
+    train_dataloader = create_data_loader(fine_tuning_data,BATCH_SIZE)
+    
+    # Creating the NN model 
+    feed_forward_net = ONED_CNN_Nway_Loadedcoef(PRETRAINED_MODEL,device).to(device)
+    
+    # Creating targ_input of the pre-trained control filters.
+    pre_train_filters = Fxied_filters(FILE_NAME_PATH,fs)
+    targ_input        = pre_train_filters.Charactors
+    
+    # Initiating loss function and optimiser
+    loss_fn = nn.CrossEntropyLoss()
+    optimiser = torch.optim.Adam(feed_forward_net.parameters(),
+                                 lr=LEARNING_RATE)
+    
+    # Training model
+    train(feed_forward_net, train_dataloader, loss_fn, optimiser, device, targ_input, EPOCHS)
+    
+    # Saving model
+    torch.save(feed_forward_net.state_dict(), MODEL_PTH)
+    print("Trained feed forward net saved at " + MODEL_PTH)
+    
 #--------------------------------------------------------------
 # Main function 
 #--------------------------------------------------------------
