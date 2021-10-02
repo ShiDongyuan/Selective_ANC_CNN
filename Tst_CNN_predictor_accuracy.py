@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader 
 from MyDataLoader import MyNoiseDataset
-from Tst_CNN_predicotr_v1 import Filter_ID_predictor
+from Tst_CNN_predicotr_v1 import Filter_ID_predictor, Filter_ID_predictor_from_1DCNN_LMSoftmax
 from Train_validate import create_data_loader
 #-----------------------------------------------------------------
 # Function    :
@@ -42,6 +42,26 @@ def Testing_model_accuracy(MODEL_PATH, MATFILE_PATH, VALIDATTION_FILE):
     _, average_acc = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
     print(f"The average accuracy is {average_acc}")
 
+#------------------------------------------------------------------------------------------
+# Function  : Testing accuracy of the predictor of 1D_CNN with LMSoftmax (coming from main)
+#------------------------------------------------------------------------------------------
+def Testing_model_with_LMSoftmax_accuracy(MODEL_PATH,MATFILE_PATH, VALIDATTION_FILE, LMSOFTMAX_WEIGHT_PTH):
+    if torch.cuda.is_available():
+        device = "cuda"
+    else:
+        device = "cpu"
+    print(f"Using {device}")
+    #
+    BATCH_SIZE       = 100
+    fs               = 16000
+    sheet            = "Index.csv"
+    
+    LMSoftmax_weight = torch.load(LMSOFTMAX_WEIGHT_PTH, map_location=device)
+    CNN_classfier    = Filter_ID_predictor_from_1DCNN_LMSoftmax(MODEL_PATH, MATFILE_PATH, fs, LMSoftmax_weight, device)
+    valid_data       = MyNoiseDataset(VALIDATTION_FILE,sheet)
+    valid_dataloader = create_data_loader(valid_data,BATCH_SIZE)
+    _, average_acc   = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
+    print(f"The average accuracy is {average_acc}")
 #-----------------------------------------------------------------
 if __name__ == "__main__":
     

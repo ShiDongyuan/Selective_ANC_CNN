@@ -13,7 +13,7 @@ from pytorch_metric_learning import losses
 from pytorch_metric_learning.utils.inference import LogitGetter
 #----------------------------------------------------------------------------
 BATCH_SIZE    = 250 
-EPOCHS        = 30 
+EPOCHS        = 30 # 30 
 LEARNING_RATE = 0.03#0.001 
 
 def create_data_loader(train_data, batch_size):
@@ -90,7 +90,7 @@ def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epoch
 #---------------------------------------------------------------------------------
 # Function : Training_predefined_model_by_LargMarginSoftMaxLoss (Coming from main)
 #---------------------------------------------------------------------------------
-def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TRAINNING_DATA=None, VALIDATION_DATA=None, MODEL_Pth=None):
+def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TRAINNING_DATA=None, VALIDATION_DATA=None, MODEL_Pth=None, WEIGHT_Pth = None):
     File_sheet = "Index.csv"
     
     train_data = MyNoiseDataset(TRAINNING_DATA, File_sheet)
@@ -126,6 +126,13 @@ def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TR
     # save model
     torch.save(feed_forward_net.state_dict(), MODEL_Pth)
     print("Trained feed forward net saved at " + MODEL_Pth)
+    
+    if WEIGHT_Pth:
+        torch.save(loss_fn.W, WEIGHT_Pth)
+        print('Saved the weights of the LMSoftmax layer')
+    else:
+        print('Not saving the weights of the LMSoftmax layer')
+        
     
 #---------------------------------------------------------------------------------
 if __name__ == "__main__":

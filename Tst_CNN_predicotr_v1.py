@@ -7,7 +7,9 @@ import torchaudio.transforms as T
 
 from torch.utils.data import DataLoader 
 from MyDataLoader import MyNoiseDataset
+
 from ONED_CNN_PRE import OneD_CNN_Predictor
+from ONED_CNN_LMSoftmax_PRE_v1 import ONE_CNN_LMSoftmax_Predictor
 
 import numpy as np
 import scipy.signal as signal
@@ -118,7 +120,37 @@ class Filter_ID_predictor(OneD_CNN_Predictor,Fxied_filters):
             similarity_rato.append(self.cosSimilarity(noise_1, self.Charactors[ii]))
         index = np.argmax(similarity_rato)
         return index
-            
+
+#-----------------------------------------------------------------------------------
+# Class :   Filter_ID_predictor_from_1DCNN_LMSoftmax()
+# Description:  This class uses the 1DCNN_LMSoftmax model to otbatin the filter ID.
+#-----------------------------------------------------------------------------------
+class Filter_ID_predictor_from_1DCNN_LMSoftmax(ONE_CNN_LMSoftmax_Predictor, Fxied_filters):
+    
+    def __init__(self, MODEL_PATH, MATFILE_PATH, fs, Wc, device):
+        """
+        This is the filter ID predictor, which can predict the index of the pre-trained control filters.
+        Parameters:
+            MODEL_PATH   - the pre-trained 1DCNN model.
+            MATFILE_PATH - the path of the pre-trained control filters.
+            fs           - the system sampling rate. 
+            Wc           - the parameter of the LMSoftmax layer is [embedding_size x num_classes] Tensor.
+            device       - 'cpu' or 'cuda'.
+        """
+        ONE_CNN_LMSoftmax_Predictor.__init__(self, MODEL_PATH, Wc, device)
+        Fxied_filters.__init__(self, MATFILE_PATH, fs)
+    
+    def predic_ID(self, noise_1):
+        """
+        This program is used to predict the index of the control filters.
+        :param noise: The primary noise has the dimension of [1 x fs samples].
+        """
+        similarity_rato = []
+        for ii in range(self.len):
+            similarity_rato.append(self.cosSimilarity(noise_1, self.Charactors[ii]))
+        index = np.argmax(similarity_rato)
+        return index
+               
 #------------------------>
 #------> main() <--------
 #------------------------>
