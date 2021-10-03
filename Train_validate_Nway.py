@@ -9,21 +9,22 @@ from MyDataLoader import MyNoiseDataset
 from ONED_CNN_Nway import ONED_CNN_Nway_Loadedcoef
 from sklearn.metrics import classification_report
 from Fixed_Filter_noise_cancellation import Fxied_filters
+from Bcolors import bcolors
 
 import time
 #--------------------------------------------------------------
 # Gobal parameter 
 #--------------------------------------------------------------
 BATCH_SIZE    = 1 
-EPOCHS        = 50
-LEARNING_RATE = 0.001 #0.001 0.002 0.0005
+EPOCHS        = 25 #50
+LEARNING_RATE = 0.0005 #0.001 0.002 0.0005
 
 #--------------------------------------------------------------
 # Function      :   create_data_loader()
 # Description   : Creating the data loader  
 #--------------------------------------------------------------
 def create_data_loader(train_data, batch_size):
-    train_dataloader = DataLoader(train_data, batch_size)
+    train_dataloader = DataLoader(train_data, batch_size,shuffle=True)
     return train_dataloader 
 
 
@@ -59,21 +60,31 @@ def train_single_epoch(model, data_loader, loss_fn, optimiser, device,targ_input
 
     print(f"Loss: {train_loss/len(data_loader)}")
     print(f"Accuracy : {train_acc / len(data_loader)}")
+    return train_acc/len(data_loader)
     
 #--------------------------------------------------------------
 # Function      :   train()
 # Description   : trainning the model at one poch  
 #--------------------------------------------------------------
-def train(model, data_loader, loss_fn, optimiser, device, targ_input,epochs):
+def train(model, data_loader, loss_fn, optimiser, device, targ_input, epochs, MODEL_PTH=None):
     print('----------------------------------------------------------------')
+    acc_max = 0
+    acc_max_epoch = 0
     for i in range(epochs):
         since = time.time()
         print(f"Epoch {i+1}")
-        train_single_epoch(model, data_loader, loss_fn, optimiser, device, targ_input)
+        acc = train_single_epoch(model, data_loader, loss_fn, optimiser, device, targ_input)
         time_elapsed = time.time()-since 
+        if acc > acc_max :
+            acc_max = acc 
+            acc_max_epoch = i+1
+            torch.save(model.state_dict(), MODEL_PTH) if MODEL_PTH else None
+            print(bcolors.OKCYAN+'Current mode has been saved !!'+bcolors.ENDC)   if MODEL_PTH else None
         print(f'Traning complete in {time_elapsed//60:.0f}m {time_elapsed%60:.0f}s')
         print('----------------------------------------------------------------')
-    print("Finished trainning")
+    print("Finished trainning.")
+    print(f'Maximum accuracy is {acc_max} at the {acc_max_epoch}th epoch.')
+    return True if MODEL_PTH else False
 
 #---------------------------------------------------------------------------
 # Function : training and validating the n-way-m-shot cnn (coming from main)
@@ -107,10 +118,10 @@ def Train_validate_Nway_main(PRETRAINED_MODEL=None, FILE_NAME_PATH=None, TRAININ
                                  lr=LEARNING_RATE)
     
     # Training model
-    train(feed_forward_net, train_dataloader, loss_fn, optimiser, device, targ_input, EPOCHS)
+    HasSaved=train(feed_forward_net, train_dataloader, loss_fn, optimiser, device, targ_input, EPOCHS, MODEL_PTH)
     
     # Saving model
-    torch.save(feed_forward_net.state_dict(), MODEL_PTH)
+    torch.save(feed_forward_net.state_dict(), MODEL_PTH) if not HasSaved else None
     print("Trained feed forward net saved at " + MODEL_PTH)
     
 #--------------------------------------------------------------

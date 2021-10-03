@@ -57,7 +57,7 @@ if __name__ == '__main__':
     print('=======================================================')
     print(bcolors.OKGREEN + '    Training modle accuracy based similarity' + bcolors.ENDC)
     print('=======================================================')
-    Model_pth = 'feedforwardnet_LMSoftmax_v5.pth'
+    Model_pth = 'feedforwardnet_LMSoftmax_v4.pth'
     Weight_pth = 'LMSoftmax_layer_weiths.pth'
     CNN_LMSoftmax_1FC = OneD_CNN_LMSoftmax_1FC()
     if not os.path.exists(Model_pth):
