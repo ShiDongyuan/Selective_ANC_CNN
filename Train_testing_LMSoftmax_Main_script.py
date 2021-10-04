@@ -73,7 +73,7 @@ if __name__ == '__main__':
     print('=======================================================')
     print(bcolors.HEADER + '    Testing modle accuracy based on LMSoftmax' + bcolors.ENDC)
     print('=======================================================')
-    Testing_model_accuracy(MODEL_PATH=Model_pth
+    Testing_model_with_LMSoftmax_accuracy(MODEL_PATH=Model_pth
                                         , MATFILE_PATH=Filter_mat_name
-                                        , VALIDATTION_FILE=Folder_name_of_testing_data_set)
-                                        #, LMSOFTMAX_WEIGHT_PTH=Weight_pth)
+                                        , VALIDATTION_FILE=Folder_name_of_testing_data_set
+                                        , LMSOFTMAX_WEIGHT_PTH=Weight_pth)

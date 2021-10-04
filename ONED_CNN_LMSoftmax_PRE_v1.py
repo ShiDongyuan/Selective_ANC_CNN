@@ -1,6 +1,10 @@
 from ONED_CNN_PRE import OneD_CNN_Pre
 import torch
 from torch import nn
+#----------------------------------------------------------------------------
+from pytorch_metric_learning import losses
+from pytorch_metric_learning.utils.inference import LogitGetter
+
 #-------------------------------------------------------------
 # Function  :   load_weigth_for_model()
 # Loading the weights to model from pre-trained coefficients 
@@ -30,12 +34,12 @@ class ONE_CNN_LMSoftmax_Predictor():
         load_weigth_for_model(self.cnn,MODEL_PATH,device)
         self.cnn.eval()
         self.cos = nn.CosineSimilarity(dim=1).to(device)
-        self.Wc  = Wc.to(device)
+        self.LG = LogitGetter(Wc)
         self.device = device
     
     def _get_embedding_(self, input):
         input_v = self.cnn(input)
-        embedding = input_v.mm(self.Wc) 
+        embedding = self.LG(input_v)
         return embedding 
     
     def cosSimilarity(self, signal_1, signal_2):

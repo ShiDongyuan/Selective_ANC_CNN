@@ -5,6 +5,21 @@ from torch.utils.data import DataLoader
 from MyDataLoader import MyNoiseDataset
 from Tst_CNN_predicotr_v1 import Filter_ID_predictor, Filter_ID_predictor_from_1DCNN_LMSoftmax
 from Train_validate import create_data_loader
+#----------------------------------------------------------------
+from pytorch_metric_learning import losses
+from pytorch_metric_learning.utils.inference import LogitGetter
+#-------------------------------------------------------------
+# Function  :   load_weigth_for_model()
+# Loading the weights to model from pre-trained coefficients 
+#-------------------------------------------------------------
+def load_weigth_for_model(model, pretrained_path, device):
+    model_dict      = model.state_dict()
+    pretrained_dict = torch.load(pretrained_path,map_location= device)
+
+    for k, v in model_dict.items():
+        model_dict[k] = pretrained_dict[k]
+    
+    model.load_state_dict(model_dict)
 #-----------------------------------------------------------------
 # Function    :
 # Description : 
@@ -56,7 +71,11 @@ def Testing_model_with_LMSoftmax_accuracy(MODEL_PATH,MATFILE_PATH, VALIDATTION_F
     fs               = 16000
     sheet            = "Index.csv"
     
-    LMSoftmax_weight = torch.load(LMSOFTMAX_WEIGHT_PTH, map_location=device)
+    
+    LMSoftmax_weight =losses.LargeMarginSoftmaxLoss(num_classes= 15, embedding_size= 620, margin = 2).to(device)
+    load_weigth_for_model(model=LMSoftmax_weight,pretrained_path=LMSOFTMAX_WEIGHT_PTH,device=device)
+    LMSoftmax_weight.eval()
+    
     CNN_classfier    = Filter_ID_predictor_from_1DCNN_LMSoftmax(MODEL_PATH, MATFILE_PATH, fs, LMSoftmax_weight, device)
     valid_data       = MyNoiseDataset(VALIDATTION_FILE,sheet)
     valid_dataloader = create_data_loader(valid_data,BATCH_SIZE)

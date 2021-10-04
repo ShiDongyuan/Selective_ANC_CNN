@@ -128,7 +128,7 @@ def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TR
     print("Trained feed forward net saved at " + MODEL_Pth)
     
     if WEIGHT_Pth:
-        torch.save(loss_fn.W, WEIGHT_Pth)
+        torch.save(loss_fn.state_dict(), WEIGHT_Pth)
         print('Saved the weights of the LMSoftmax layer')
     else:
         print('Not saving the weights of the LMSoftmax layer')
