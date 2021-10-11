@@ -79,14 +79,14 @@ if __name__ == "__main__":
 
     CNN = OneD_CNN()
     
-    #summary(CNN, (1,16000))
-    CNN.eval()
+    summary(CNN, (1,16000))
+    # CNN.eval()
     
-    input = torch.randn(2, 1, 16000).type(torch.float32)
-    print(input.shape)
-    C, pred = CNN(input).max(1)
-    print(C)
-    print(pred)
+    # input = torch.randn(2, 1, 16000).type(torch.float32)
+    # print(input.shape)
+    # C, pred = CNN(input).max(1)
+    # print(C)
+    # print(pred)
 
     # ANNOTATIONS_FILE = "DATA_1\Index.csv"
 

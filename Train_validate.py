@@ -45,6 +45,7 @@ def train_single_epoch(model, data_loader, loss_fn, optimiser, device, iteration
 
     print(f"loss: {train_loss/len(data_loader)}")
     print(f"Accuracy : {train_acc / len(data_loader)}")
+    return train_acc / len(data_loader)
 
 def validate_single_epoch(model, eva_data_loader, loss_fn, device):
     eval_loss = 0 
@@ -71,14 +72,16 @@ def validate_single_epoch(model, eva_data_loader, loss_fn, device):
             break 
 
     print(f"Validat loss : {eval_loss/i}" + f" Validat accuracy : {eval_acc/i}") 
+    return eval_acc/i
 
 def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epochs):
     for i in range(epochs):
         print(f"Epoch {i+1}")
-        train_single_epoch(model, data_loader, loss_fn, optimiser, device, i)
-        validate_single_epoch(model, eva_data_loader, loss_fn, device)
+        acc_train    = train_single_epoch(model, data_loader, loss_fn, optimiser, device, i)
+        acc_validate = validate_single_epoch(model, eva_data_loader, loss_fn, device)
         print("----------------------------------")
     print("Finished trainning")
+    return acc_train, acc_validate
 #----------------------------------------------------------------------------------------
 # Function : Training and validating the pre-defined 1D-CNN (It comes from main function)
 #----------------------------------------------------------------------------------------
@@ -106,11 +109,13 @@ def Train_validate_predefined_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, M
                                  lr=LEARNING_RATE)
 
     # train model
-    train(feed_forward_net, train_dataloader, valid_dataloader, loss_fn, optimiser, device, EPOCHS)
+    acc_train, acc_validate = train(feed_forward_net, train_dataloader, valid_dataloader, loss_fn, optimiser, device, EPOCHS)
 
     # save model
     torch.save(feed_forward_net.state_dict(), MODEL_PTH)
     print("Trained feed forward net saved at " + MODEL_PTH)
+    return acc_train, acc_validate
+
 #----------------------------------------------------------------------------------------
 if __name__ == "__main__":
     File_sheet = 'Index.csv'

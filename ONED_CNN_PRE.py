@@ -119,41 +119,43 @@ class   OneD_CNN_Predictor():
 if __name__ == "__main__":
     MODEL_PATH = "feedforwardnet.pth"
     cnn = OneD_CNN_Pre() 
-
-    load_weigth_for_model(cnn,MODEL_PATH)
-
-    cnn.eval()
     
-    input = torch.randn(1, 1, 16000).type(torch.float32)
-    out = cnn(input)
-    print(out.shape)
+    summary(cnn, (1,16000))
 
-    d = cosine_distance(out)
-    print(d)
+    # load_weigth_for_model(cnn,MODEL_PATH)
 
-    cos = nn.CosineSimilarity(dim=1)
-    output = cos(out, out)
-    print(output.item())
+    # cnn.eval()
+    
+    # input = torch.randn(1, 1, 16000).type(torch.float32)
+    # out = cnn(input)
+    # print(out.shape)
 
-    VALIDATTION_FILE = "Validate_1\Index.csv"
+    # d = cosine_distance(out)
+    # print(d)
 
-    valid_data = MyNoiseDataset(VALIDATTION_FILE)
-    signel1t, label1 = valid_data[230] #25
-    signel1 = signel1t.unsqueeze(0)
-    signel2t, label2 = valid_data[78]
-    signel2 = signel2t.unsqueeze(0)
-    print(f"Lable1: {label1} Label2 : {label2}")
+    # cos = nn.CosineSimilarity(dim=1)
+    # output = cos(out, out)
+    # print(output.item())
 
-    out1 =cos(cnn(signel1),cnn(signel2))
-    print(out1)
+    # VALIDATTION_FILE = "Validate_1\Index.csv"
 
-    fs = 16000
-    plot_specgram(signel1t, fs)
-    plot_specgram(signel2t, fs)
+    # valid_data = MyNoiseDataset(VALIDATTION_FILE)
+    # signel1t, label1 = valid_data[230] #25
+    # signel1 = signel1t.unsqueeze(0)
+    # signel2t, label2 = valid_data[78]
+    # signel2 = signel2t.unsqueeze(0)
+    # print(f"Lable1: {label1} Label2 : {label2}")
 
-    Predictor = OneD_CNN_Predictor(MODEL_PATH)
-    out2      = Predictor.cosSimilarity(signel1t, signel2t)
-    print(f"The cos similarity is {out2:0.4f}.")
+    # out1 =cos(cnn(signel1),cnn(signel2))
+    # print(out1)
+
+    # fs = 16000
+    # plot_specgram(signel1t, fs)
+    # plot_specgram(signel2t, fs)
+
+    # Predictor = OneD_CNN_Predictor(MODEL_PATH)
+    # out2      = Predictor.cosSimilarity(signel1t, signel2t)
+    # print(f"The cos similarity is {out2:0.4f}.")
 
 
     i = 0 

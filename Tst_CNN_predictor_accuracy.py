@@ -56,6 +56,7 @@ def Testing_model_accuracy(MODEL_PATH, MATFILE_PATH, VALIDATTION_FILE):
     valid_dataloader = create_data_loader(valid_data,BATCH_SIZE)
     _, average_acc = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
     print(f"The average accuracy is {average_acc}")
+    return average_acc
 
 #------------------------------------------------------------------------------------------
 # Function  : Testing accuracy of the predictor of 1D_CNN with LMSoftmax (coming from main)

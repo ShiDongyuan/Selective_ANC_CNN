@@ -77,3 +77,11 @@ if __name__ == '__main__':
                                         , MATFILE_PATH=Filter_mat_name
                                         , VALIDATTION_FILE=Folder_name_of_testing_data_set
                                         , LMSOFTMAX_WEIGHT_PTH=Weight_pth)
+    
+    # Testing the accuracy of ONED_CNN without the last FC layer 
+    print('=======================================================')
+    print(bcolors.HEADER + '    Testing modle accuracy of ONED_CNN without the last FC layer' + bcolors.ENDC)
+    print('=======================================================')
+    Testing_model_accuracy(MODEL_PATH=Model_pth
+                           , MATFILE_PATH= Filter_mat_name
+                           , VALIDATTION_FILE= Folder_name_of_testing_data_set)
