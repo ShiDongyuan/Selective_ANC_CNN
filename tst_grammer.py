@@ -1,5 +1,6 @@
 import numpy as np 
 import torch
+from torch.autograd.grad_mode import F
 
 embedding_size = 4 
 num_classes    = 2
@@ -36,3 +37,17 @@ parser.add_argument('--vis', default=False, metavar='V',
                         help='enables visualizing 2d features (default: False).')
 args = parser.parse_args()
 print(args)
+
+a = torch.arange(16000*6)
+print(a.shape[0])
+
+assert  a.shape[0] % 16000 == 0, 'The length of the primary noise is not an integral multiple of fs'
+
+i = 1
+ 
+c = torch.rand(2, 3)
+print(c.shape)
+d = c.unsqueeze(1)
+print(d.shape)
+
+print(f'The tensors dimension is {d.dim()}')
