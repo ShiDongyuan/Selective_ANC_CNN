@@ -51,3 +51,10 @@ d = c.unsqueeze(1)
 print(d.shape)
 
 print(f'The tensors dimension is {d.dim()}')
+
+x = torch.tensor([1, 2, 3, 4, 5, 6, 7, 8]).unsqueeze(0)
+print(x)
+print(x.shape)
+y = torch.roll(x,1,1)
+
+print(y)

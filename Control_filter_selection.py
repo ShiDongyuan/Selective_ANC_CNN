@@ -119,6 +119,7 @@ def main():
                                                                              ,fs=16000)
     
     primary_noise = Generating_boardband_noise_wavefrom_tensor([1800, 2010],6,fs=16000)
+    primary_noise = Casting_multiple_time_length_of_primary_noise(primary_noise,fs=16000)
     print(primary_noise.shape)
     Id_vector = Pre_trained_control_filter_ID_pridector.predic_ID_vector(primary_noise)
     print(Id_vector)
