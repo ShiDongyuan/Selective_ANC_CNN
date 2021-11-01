@@ -82,7 +82,7 @@ def DistDisturbance_reference_generation_from_Fvector(fs, T, f_vector, Pri_path,
     xin   = np.random.randn(len(t))
     Re    = signal.lfilter(b2,1,xin)
     Noise = Re[len_f-1:]
-    Noise = Noise/np.sqrt(np.var(Noise))
+    # Noise = Noise/np.sqrt(np.var(Noise))
     
     # Construting the desired signal 
     Dir, Fx = signal.lfilter(Pri_path, 1, Noise), signal.lfilter(Sec_path, 1, Noise)

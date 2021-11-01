@@ -23,6 +23,9 @@ class FxLMS_algroithm():
     def LossFunction(self,y,d):
         e = d-y 
         return e**2, e 
+    
+    def _get_coeff_(self):
+        return self.Wc.detach().numpy()
 
 #------------------------------------------------------------------------------
 # Function : train_fxlms_algorithm()
@@ -32,7 +35,7 @@ def train_fxlms_algorithm(Model, Ref, Disturbance):
     bar = progressbar.ProgressBar(maxval=2*Disturbance.shape[0], \
         widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
     
-    Stepsize = 0.0001  
+    Stepsize = 0.000001  
     optimizer= optim.SGD([Model.Wc], lr=Stepsize)
     
     bar.start()
