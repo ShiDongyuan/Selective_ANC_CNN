@@ -123,7 +123,43 @@ def main():
     print(primary_noise.shape)
     Id_vector = Pre_trained_control_filter_ID_pridector.predic_ID_vector(primary_noise)
     print(Id_vector)
-    pass
+
+def Control_filter_selection(MODEL_PTH_type=1, fs = 16000, Primary_noise=None):
+    Frequecy_band = [[20, 550], [450, 1200], [1000, 2700],[2500, 4500],[4400, 7980]]
+     
+    # Creating the pre-trained band filter for 5 different frequency band    
+    Filter_mat_name = 'Boardband_filter_from_5frequencybands.mat'
+    
+    if not os.path.exists(Filter_mat_name):
+        Boardband_Filter_Desgin_as_Given_Freqeuencybands(MAT_filename=Filter_mat_name, F_bands=Frequecy_band,fs=16000)
+    else:
+        print("Data of " + Filter_mat_name + ' is existed !!!')  
+    
+    Fxied_control_filter = Fxied_filters(MATFILE_PATH=Filter_mat_name, fs=fs)
+    
+    Charactors=Casting_single_time_length_of_training_noise(Fxied_control_filter.Charactors,fs=fs)
+    
+    # cnn modle path 
+    if MODEL_PTH_type == 0:
+        MODEL_PTH = 'feedforwardnet_v1.pth'
+    elif MODEL_PTH_type == 1:
+        MODEL_PTH = 'feedforwardnet_LMSoftmax_v4.pth'
+    else:
+        MODEL_PTH = "feedforwardnet_Nway_v3.pth"#'feedforwardnet_LMSoftmax_v4.pth'#'feedforwardnet_v1.pth'
+        
+    device    = "cpu"
+    
+    Pre_trained_control_filter_ID_pridector = Control_filter_Index_predictor(MODEL_PATH=MODEL_PTH
+                                                                             ,device= device
+                                                                             ,filter_training_noise=Charactors
+                                                                             ,fs=fs)
+    
+    Primary_noise = Casting_multiple_time_length_of_primary_noise(Primary_noise,fs=fs)
+    
+    Id_vector = Pre_trained_control_filter_ID_pridector.predic_ID_vector(Primary_noise)
+    
+    return Id_vector
+    
     
 if __name__ == "__main__":
     main()

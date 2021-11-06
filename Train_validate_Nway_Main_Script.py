@@ -34,7 +34,7 @@ if __name__ == '__main__':
     print('=======================================================')
     #Pre_net_model = 'feedforwardnet_LMSoftmax_v4.pth'
     Pre_net_model = "feedforwardnet_v1.pth"
-    MODEL_PTH     = "feedforwardnet_Nway_v2.pth"
+    MODEL_PTH     = "feedforwardnet_Nway_v3.pth"
     if not os.path.exists(MODEL_PTH):
         Train_validate_Nway_main(PRETRAINED_MODEL=Pre_net_model
                                  , FILE_NAME_PATH=Filter_mat_name

@@ -1,4 +1,4 @@
-from Reading_path_tst import loading_paths
+from Reading_path_tst import loading_paths, loading_paths_from_MAT
 from Disturbance_generation import DistDisturbance_reference_generation_from_Fvector
 import numpy as np
 from FxLMS_algorithm import FxLMS_algroithm, train_fxlms_algorithm
@@ -20,7 +20,8 @@ def main():
     Len_control = 1024 
     
     # Loading the primary and secondary path
-    Pri_path, Secon_path = loading_paths() 
+    # Pri_path, Secon_path = loading_paths() 
+    Pri_path, Secon_path = loading_paths_from_MAT()
     
     # Training the control filters from the defined frequency band 
     num_filters = len(Frequecy_band)
@@ -29,8 +30,9 @@ def main():
     for ii, F_vector in enumerate( Frequecy_band):
         Dis, Fx = DistDisturbance_reference_generation_from_Fvector(fs=fs, T= T, f_vector=F_vector, Pri_path=Pri_path, Sec_path=Secon_path)
         controller = FxLMS_algroithm(Len=Len_control)
-        Wc_matrix[ii] = controller._get_coeff_()
+        
         Erro = train_fxlms_algorithm(Model=controller,Ref=Fx, Disturbance=Dis)
+        Wc_matrix[ii] = controller._get_coeff_()
         
         # Drawing the impulse response of the primary path
         plt.title('The error signal of the FxLMS algorithm')
@@ -40,7 +42,7 @@ def main():
         plt.grid()
         plt.show()
         
-        save_mat__(FILE_NAME_PATH, Wc_matrix)
+    save_mat__(FILE_NAME_PATH, Wc_matrix)
 
 if __name__ == "__main__":
     main()

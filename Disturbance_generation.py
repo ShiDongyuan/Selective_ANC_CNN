@@ -88,6 +88,26 @@ def DistDisturbance_reference_generation_from_Fvector(fs, T, f_vector, Pri_path,
     Dir, Fx = signal.lfilter(Pri_path, 1, Noise), signal.lfilter(Sec_path, 1, Noise)
     
     return torch.from_numpy(Dir).type(torch.float), torch.from_numpy(Fx).type(torch.float)
+
+def Varied_distrubance_reference_generation_from_Fvector(fs, T, f_vector, Pri_path, Sec_path):
+    t     = np.arange(0,T,1/fs).reshape(-1,1)
+    len_f = 1024
+    for ii in range(len(f_vector)):
+        b2    = signal.firwin(len_f, f_vector[ii], pass_zero='bandpass', window ='hamming',fs=fs)
+        xin   = np.random.randn(len(t))
+        Re    = signal.lfilter(b2,1,xin)
+        if ii == 0:
+            Noise = Re[fs:]
+        else:
+            if ii ==2 :
+                Noise = np.concatenate((Noise, 4*Re[fs:]),axis=0)
+            else: 
+                Noise = np.concatenate((Noise, Re[fs:]),axis=0)
+        
+    # Construting the desired signal 
+    Dir, Fx = signal.lfilter(Pri_path, 1, Noise), signal.lfilter(Sec_path, 1, Noise)
+    
+    return torch.from_numpy(Dir).type(torch.float), torch.from_numpy(Fx).type(torch.float), torch.from_numpy(Noise).type(torch.float)
 #--------------------------------------------------------------
 if __name__ == "__main__":
     Dis, Fx = Disturbance_reference_generation()

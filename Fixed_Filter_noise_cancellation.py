@@ -13,6 +13,11 @@ import scipy.signal as signal
 import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq, ifft
 #-----------------------------------------------------------------------------------
+def minmaxscaler(data):
+    min = data.min()
+    max = data.max()    
+    return (data)/(max-min)
+#-----------------------------------------------------------------------------------
 # Class type  : Fxied_filters 
 # Description : Loading pre-trained filter from .mat file
 #-----------------------------------------------------------------------------------
@@ -42,7 +47,8 @@ class Fxied_filters():
         yout  = signal.lfilter(self.Wc_vectors[classID,:],1,xin)
         yout  = yout[self.filterlen:]
         # Standarlize 
-        yout = yout/np.sqrt(np.var(yout))
+        #yout = yout/np.sqrt(np.var(yout))
+        yout = minmaxscaler(yout)
         # return a tensor of [1 x sample rate]
         return torch.from_numpy(yout).type(torch.float).unsqueeze(0)
     
