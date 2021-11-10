@@ -74,15 +74,40 @@ def plot_specgram(waveform, sample_rate, title="Spectrogram", xlim=None):
             axes[c].set_xlim(xlim)
     figure.suptitle(title)
     plt.show(block=True)
-    
+
+#--------------------------------------------------------------
+# Function  : resample_wav()
+# Description : Getting the waveform by sample rate 
+#--------------------------------------------------------------
+def resample_wav(waveform, sample_rate,resample_rate):
+    resampler = T.Resample(sample_rate, resample_rate, dtype=waveform.dtype)
+    resampled_waveform = resampler(waveform)
+    return resampled_waveform
+#--------------------------------------------------------------
+# Function    : loading_real_wave_noise()
+# Description : loading the raw aircraf noise from file. 
+#--------------------------------------------------------------
+def loading_real_wave_noise():
+    folde_name     = 'Real_noise'
+    sound_name     = 'Aircraft.wav'
+    SAMPLE_WAV_SPEECH_PATH = os.path.join(folde_name, sound_name)
+    waveform, sample_rate  = torchaudio.load(SAMPLE_WAV_SPEECH_PATH)
+    #waveform, sample_rate = _get_sample(SAMPLE_WAV_SPEECH_PATH, 16000)
+    resample_rate = 16000
+    waveform = resample_wav(waveform, sample_rate, resample_rate)
+    return waveform, resample_rate
+
+#----------------------------------------------------------------
 # loading the wave file 
 def main():
     folde_name     = 'Real_noise'
-    sound_name     = 'ENGINE.wav'
+    sound_name     = 'Aircraft.wav'
     SAMPLE_WAV_SPEECH_PATH = os.path.join(folde_name, sound_name)
 
     waveform, sample_rate = torchaudio.load(SAMPLE_WAV_SPEECH_PATH)
-
+    #waveform, sample_rate = _get_sample(SAMPLE_WAV_SPEECH_PATH, 16000)
+    waveform = resample_wav(waveform, sample_rate, 16000)
+    sample_rate = 16000
     print_stats(waveform, sample_rate=sample_rate)
     plot_waveform(waveform, sample_rate)
     plot_specgram(waveform, sample_rate)

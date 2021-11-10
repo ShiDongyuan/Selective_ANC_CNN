@@ -1,6 +1,7 @@
 import numpy as np
 import math 
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+from numpy.core.fromnumeric import repeat 
 from scipy import signal, misc
 import torch
 #-------------------------------------------------------------
@@ -88,7 +89,10 @@ def DistDisturbance_reference_generation_from_Fvector(fs, T, f_vector, Pri_path,
     Dir, Fx = signal.lfilter(Pri_path, 1, Noise), signal.lfilter(Sec_path, 1, Noise)
     
     return torch.from_numpy(Dir).type(torch.float), torch.from_numpy(Fx).type(torch.float)
-
+#-------------------------------------------------------------
+# Function    : Varied_distrubance_reference_generation_from_Fvector()
+# Discription : Generating the distubrane and reference signal from the defined parameters
+#-------------------------------------------------------------
 def Varied_distrubance_reference_generation_from_Fvector(fs, T, f_vector, Pri_path, Sec_path):
     t     = np.arange(0,T,1/fs).reshape(-1,1)
     len_f = 1024
@@ -108,7 +112,29 @@ def Varied_distrubance_reference_generation_from_Fvector(fs, T, f_vector, Pri_pa
     Dir, Fx = signal.lfilter(Pri_path, 1, Noise), signal.lfilter(Sec_path, 1, Noise)
     
     return torch.from_numpy(Dir).type(torch.float), torch.from_numpy(Fx).type(torch.float), torch.from_numpy(Noise).type(torch.float)
+#-------------------------------------------------------------
+# Function     : Disturbance_generation_from_real_noise()
+# Descritption : Generating the disturbance and filtered reference 
+# from the raw waveform.
+#-------------------------------------------------------------
+def Disturbance_generation_from_real_noise(fs, Repet, wave_from, Pri_path, Sec_path):
+    wave  = wave_from[0,:].numpy()
+    wavec = wave
+    for ii in range(Repet):
+        wavec = np.concatenate((wavec,wave),axis=0)
+    pass
+    # Construting the desired signal 
+    Dir, Fx = signal.lfilter(Pri_path, 1, wavec), signal.lfilter(Sec_path, 1, wavec)
+    
+    N   = len(Dir)
+    N_z = N//fs 
+    Dir, Fx = Dir[0:N_z*fs], Fx[0:N_z*fs]
+    
+    return torch.from_numpy(Dir).type(torch.float), torch.from_numpy(Fx).type(torch.float), torch.from_numpy(wavec).type(torch.float)
 #--------------------------------------------------------------
+# from loading_real_wave_noise import loading_real_wave_noise
 if __name__ == "__main__":
     Dis, Fx = Disturbance_reference_generation()
     print(Dis.shape)
+    # waveform, resample_rate = loading_real_wave_noise()
+    # print(waveform[0,:].numpy().shape)
