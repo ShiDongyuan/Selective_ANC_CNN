@@ -29,9 +29,9 @@ class FxLMS_algroithm():
 
 
 #------------------------------------------------------------------------------
-# Function : train_fxlms_algorithm()
+# Function : train_fxlms_algorithm() 0.00000005
 #------------------------------------------------------------------------------
-def train_fxlms_algorithm(Model, Ref, Disturbance, Stepsize = 0.00000005):
+def train_fxlms_algorithm(Model, Ref, Disturbance, Stepsize = 0.00001):
    
     bar = progressbar.ProgressBar(maxval=2*Disturbance.shape[0], \
         widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])

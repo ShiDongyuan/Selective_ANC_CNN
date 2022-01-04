@@ -89,6 +89,7 @@ if __name__ == "__main__":
     Filters = Filter_designer(filter_len=1024, F_vector= F_vector, fs=fs)
     Filters.__save_mat__(FILE_NAME_PATH)
     print(Filters.filter_num)
+    print(F_vector)
 #--------------------------------------------------------------------
 # Design own bandfilter 
     from DataSet_construction_DesignBand import F_LEVEL
