@@ -90,6 +90,8 @@ class Automatic_label_machine():
         bar = progressbar.ProgressBar(maxval=len(self.f_names), \
         widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         
+        print('=====================Start labeling ============================')
+        print(f'The total .wav file numer is {len(self.f_names)}')
         bar.start()
         for iterate, file_wave in enumerate(self.f_names):
             filePath  = os.path.join(self.folder, file_wave)
@@ -109,29 +111,30 @@ class Automatic_label_machine():
             bar.update(iterate)
         bar.finish()
         self.lable_inex.flush()
+        print('=======================End labeling ============================')
         
         
 #-----------------------------------------------------
 if __name__=="__main__":
-    folder_path = 'Duct_path'
-    f_names = read_all_file_from_folder(folder_path=folder_path, file_sufix='.csv')
+    # folder_path = 'Duct_path'
+    # f_names = read_all_file_from_folder(folder_path=folder_path, file_sufix='.csv')
     
-    print(f_names)
-    Pri_path, Secon_path = loading_paths_from_MAT()
-    # Drawing the impulse response of the primary path
-    plt.title('The response of the primary path')
-    plt.plot(Secon_path)
-    plt.ylabel('Amplitude')
-    plt.xlabel('Time')
-    plt.grid()
-    plt.show()
+    # print(f_names)
+    # Pri_path, Secon_path = loading_paths_from_MAT()
+    # # Drawing the impulse response of the primary path
+    # plt.title('The response of the primary path')
+    # plt.plot(Secon_path)
+    # plt.ylabel('Amplitude')
+    # plt.xlabel('Time')
+    # plt.grid()
+    # plt.show()
     
-    plot_frequency(Secon_path)
+    # plot_frequency(Secon_path)
     
     # Pre-trained control filter file 
     control_filter_mat_file  = 'Control_filter_from_15frequencies.mat'
     # Training set and label out file 
-    training_set_folder_path = 'validate_data'
+    training_set_folder_path = 'Testing_data'
     new_training_index       = 'auto_index.csv'
     # Measured path file 
     folder                   = 'Duct_path'
