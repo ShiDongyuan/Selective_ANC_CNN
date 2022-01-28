@@ -1,4 +1,5 @@
-from DataSet_construction_DesignBand import Generating_Dataset_as_Given_Frequencybands
+#from DataSet_construction_DesignBand import Generating_Dataset_as_Given_Frequencybands
+from DataSet_construction_DesignBand_banlance import Generating_Dataset_as_Given_Frequencybands
 from Train_validate_Nway import Train_validate_Nway_main
 from Filter_design import Boardband_Filter_Desgin_as_Given_Freqeuencybands
 from Tst_CNN_predictor_accuracy import Testing_model_accuracy
@@ -17,7 +18,8 @@ if __name__ == '__main__':
     
     for File_name_of_dataset, N_sample in zip(File_name_of_dataset_list, N_sample_list):
         if not os.path.exists(File_name_of_dataset):
-            Generating_Dataset_as_Given_Frequencybands(N_sample=N_sample, F_bands=Frequecy_band, Folder_name= File_name_of_dataset) 
+            #Generating_Dataset_as_Given_Frequencybands(N_sample=N_sample, F_bands=Frequecy_band, Folder_name= File_name_of_dataset)
+            Generating_Dataset_as_Given_Frequencybands(N_sample_each_class= N_sample//len(Frequecy_band), F_bands=Frequecy_band, Folder_name= File_name_of_dataset) 
         else:
             print(bcolors.WARNING + File_name_of_dataset + ' exists !!!' + bcolors.ENDC)
     
@@ -49,4 +51,5 @@ if __name__ == '__main__':
     print('=======================================================')
     Testing_model_accuracy(MODEL_PATH=MODEL_PTH
                            , MATFILE_PATH=Filter_mat_name
-                           , VALIDATTION_FILE=File_name_of_dataset_list[2])                    
+                           , VALIDATTION_FILE=File_name_of_dataset_list[2]
+                           , Report=True)                    

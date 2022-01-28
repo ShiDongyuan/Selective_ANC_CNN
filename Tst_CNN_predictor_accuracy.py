@@ -5,6 +5,12 @@ from torch.utils.data import DataLoader
 from MyDataLoader import MyNoiseDataset
 from Tst_CNN_predicotr_v1 import Filter_ID_predictor, Filter_ID_predictor_from_1DCNN_LMSoftmax
 from Train_validate import create_data_loader
+
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+
+from Bcolors import bcolors
+
+import matplotlib.pyplot as plt
 #----------------------------------------------------------------
 from pytorch_metric_learning import losses
 from pytorch_metric_learning.utils.inference import LogitGetter
@@ -24,38 +30,72 @@ def load_weigth_for_model(model, pretrained_path, device):
 # Function    :
 # Description : 
 #-----------------------------------------------------------------
-def tst_accuracy_of_model(tst_data_loder, model):
-    accuracy_vec = []
-    i            = 0 
-    for input, target in tst_data_loder:
-        i += 1
-        batch_acc = 0
-        for signal_1d, target_1d in zip(input, target):
-            batch_acc +=(model.predic_ID(signal_1d)==target_1d.numpy())
-        acc = batch_acc/len(target)
-        print(f"----------------------------------------")
-        print(f"The {i}-th iteration's accuracy is {acc}")
-        accuracy_vec.append(acc)
-    return accuracy_vec, sum(accuracy_vec)/len(accuracy_vec)
+def tst_accuracy_of_model(tst_data_loder, model, return_index =None): #return_index = None
+    if return_index == None :
+        accuracy_vec = []
+        i            = 0 
+        for input, target in tst_data_loder:
+            i += 1
+            batch_acc = 0
+            for signal_1d, target_1d in zip(input, target):
+                batch_acc +=(model.predic_ID(signal_1d)==target_1d.numpy())
+            acc = batch_acc/len(target)
+            print(f"----------------------------------------")
+            print(f"The {i}-th iteration's accuracy is {acc}")
+            accuracy_vec.append(acc)
+        return accuracy_vec, sum(accuracy_vec)/len(accuracy_vec)
+    else:
+        i             = 0 
+        predict_index = []
+        target_index  = []
+        accuracy_vec  = []
+        for input, target in tst_data_loder:
+            i += 1
+            batch_acc = 0
+            for signal_1d, target_1d in zip(input, target):
+                pre, tar = model.predic_ID(signal_1d), target_1d.numpy()
+                predict_index.append(pre)
+                target_index.append(tar)
+                batch_acc += (pre == tar)
+            acc = batch_acc/len(target)
+            print(f"----------------------------------------")
+            print(f"The {i}-th iteration's accuracy is {acc}")
+            accuracy_vec.append(acc)
+        return accuracy_vec, sum(accuracy_vec)/len(accuracy_vec), predict_index, target_index
 
 #----------------------------------------------------------------
 # Function  : Testing accuracy of the predictor (coming from main)
 #----------------------------------------------------------------
-def Testing_model_accuracy(MODEL_PATH, MATFILE_PATH, VALIDATTION_FILE):
+def Testing_model_accuracy(MODEL_PATH, MATFILE_PATH, VALIDATTION_FILE, Report=None, Class_Num=5):
     if torch.cuda.is_available():
         device = "cuda"
     else:
         device = "cpu"
     print(f"Using {device}")
-    #
+    #D
     BATCH_SIZE       = 100
     fs               = 16000
     sheet            = "Index.csv"
     CNN_classfier  = Filter_ID_predictor(MODEL_PATH, MATFILE_PATH, fs, device)
     valid_data     = MyNoiseDataset(VALIDATTION_FILE,sheet)
     valid_dataloader = create_data_loader(valid_data,BATCH_SIZE)
-    _, average_acc = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
-    print(f"The average accuracy is {average_acc}")
+    if Report == None: 
+        _, average_acc = tst_accuracy_of_model(valid_dataloader,CNN_classfier)
+        print(f"The average accuracy is {average_acc}")
+    else:
+        _, average_acc, y_pred, y_true = tst_accuracy_of_model(valid_dataloader,CNN_classfier,return_index=True)
+        print(bcolors.OKCYAN + f"The average accuracy is {average_acc}" + bcolors.ENDC)
+        target_names = []
+        for jj in range(Class_Num):
+            target_names.append(f'class {jj}')
+        #target_names = ['class 0', 'class 1', 'class 2','class 3', 'class 4']
+        print(bcolors.RED + '<<====================Classification report=========================>>' + bcolors.ENDC)
+        print(classification_report(y_true, y_pred, target_names=target_names))
+        print(bcolors.RED +'<<==========================End=====================================>>' + bcolors.ENDC)
+        cm = confusion_matrix(y_true, y_pred)
+        disp  = ConfusionMatrixDisplay(confusion_matrix=cm,display_labels=target_names)
+        disp.plot()
+        plt.show()
     return average_acc
 
 #------------------------------------------------------------------------------------------

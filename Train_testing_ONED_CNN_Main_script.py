@@ -51,7 +51,8 @@ if __name__ == '__main__':
     if os.path.exists(MODEL_PTH):
         acc =Test_model_accuracy_original(TESTING_DATASET_FILE=Folder_name_list_of_data_set[2]
                                           , MODLE_CLASS=OneD_CNN
-                                          , MODLE_PTH=MODEL_PTH)
+                                          , MODLE_PTH=MODEL_PTH
+                                          , Report=True)
         repot = bcolors.OKGREEN  + f' The accuracy on testing datast is {acc}' + bcolors.ENDC
         print(repot)
         f.write(repot + '\n')
@@ -64,7 +65,9 @@ if __name__ == '__main__':
     print('=======================================================')
     acc_similarity = Testing_model_accuracy(MODEL_PATH=MODEL_PTH
                                             , MATFILE_PATH= MAT_FILENAME
-                                            , VALIDATTION_FILE= Folder_name_list_of_data_set[2])
+                                            , VALIDATTION_FILE= Folder_name_list_of_data_set[2]
+                                            , Report=True
+                                            , Class_Num=15)
     repot = bcolors.OKGREEN  + f' The accuracy on similarity is {acc_similarity}' + bcolors.ENDC
     f.write(repot + '\n')
     f.close()

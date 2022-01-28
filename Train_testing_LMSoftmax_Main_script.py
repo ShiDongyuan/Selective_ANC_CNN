@@ -1,3 +1,9 @@
+#   _____          _      _             _    __  __  ___       __ _   __  __
+#  |_   _| _  __ _(_)_ _ (_)_ _  __ _  | |  |  \/  |/ __|___  / _| |_|  \/  | __ _ __ __
+#    | || '_|/ _` | | ' \| | ' \/ _` | | |__| |\/| |\__ \ _ \|  _|  _| |\/| |/ _` |\ \ /
+#    |_||_|  \__,_|_|_||_|_|_||_\__, | |____|_|  |_||___\___/|_|  \__|_|  |_|\__,_|/_\_\
+#                               |___/
+
 from DataSet_construction_DesignBand import Generating_Dataset_as_Given_Frequencybands
 from DataSet_construction_v2 import Generating_Dataset_as_Given_Frequencylevels
 from Filter_design import Boardband_Filter_Desgin_as_Given_Freqeuencybands

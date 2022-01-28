@@ -13,7 +13,7 @@ from pytorch_metric_learning import losses
 from pytorch_metric_learning.utils.inference import LogitGetter
 #----------------------------------------------------------------------------
 BATCH_SIZE    = 250 
-EPOCHS        = 30 # 30 
+EPOCHS        = 100 # 30 
 LEARNING_RATE = 0.03#0.001 
 
 def create_data_loader(train_data, batch_size):
@@ -51,7 +51,7 @@ def train_single_epoch(model, data_loader, loss_fn, optimiser, device, iteration
     
     print(f"loss: {train_loss/len(data_loader)}")
     print(f"Accuracy : {train_acc / len(data_loader)}")
-    return LG
+    return LG, train_acc / len(data_loader)
 
 def validate_single_epoch(model, eva_data_loader, loss_fn, device):
     eval_loss = 0 
@@ -78,12 +78,22 @@ def validate_single_epoch(model, eva_data_loader, loss_fn, device):
             break 
 
     print(f"Validat loss : {eval_loss/i}" + f" Validat accuracy : {eval_acc/i}") 
+    return eval_acc/i
 
-def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epochs):
+def train(model, data_loader, eva_data_loader, loss_fn, optimiser, device, epochs, scheduler2, MODEL_Pth):
+    acc_past_max = 0 
     for i in range(epochs):
         print(f"Epoch {i+1}")
-        LG = train_single_epoch(model, data_loader, loss_fn, optimiser, device, i)
+        LG, acc  = train_single_epoch(model, data_loader, loss_fn, optimiser, device, i)
+        scheduler2.step()
         validate_single_epoch(model, eva_data_loader, LG, device)
+        
+        # Saving the best classifier model 
+        if acc_past_max < acc:
+            acc_past_max = acc
+            torch.save(model.state_dict(), MODEL_Pth)
+            print(bcolors.OKCYAN + "Trained feed forward net saved at " + MODEL_Pth + bcolors.ENDC) 
+              
         print("----------------------------------")
     print("Finished trainning")
 
@@ -119,13 +129,16 @@ def Training_predefined_model_by_LargMarginSoftMaxLoss( MODEL_STRUCTURE=None, TR
                                   {'params': loss_fn.parameters()}
                                 ],
                                  lr=LEARNING_RATE)
+    
+    # Scheduler for the training progress 
+    scheduler2 = torch.optim.lr_scheduler.MultiStepLR(optimiser, milestones=[30,80], gamma=0.1)
 
     # train model
-    train(feed_forward_net, train_dataloader, valid_dataloader, loss_fn, optimiser, device, EPOCHS)
+    train(feed_forward_net, train_dataloader, valid_dataloader, loss_fn, optimiser, device, EPOCHS, scheduler2, MODEL_Pth)
 
     # save model
-    torch.save(feed_forward_net.state_dict(), MODEL_Pth)
-    print("Trained feed forward net saved at " + MODEL_Pth)
+    # torch.save(feed_forward_net.state_dict(), MODEL_Pth)
+    # print("Trained feed forward net saved at " + MODEL_Pth)
     
     if WEIGHT_Pth:
         torch.save(loss_fn.state_dict(), WEIGHT_Pth)

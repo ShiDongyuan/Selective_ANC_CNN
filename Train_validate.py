@@ -15,7 +15,7 @@ EPOCHS        = 30
 LEARNING_RATE = 0.001 
 
 def create_data_loader(train_data, batch_size):
-    train_dataloader = DataLoader(train_data, batch_size)
+    train_dataloader = DataLoader(train_data, batch_size, shuffle=True)
     return train_dataloader 
 
 def train_single_epoch(model, data_loader, loss_fn, optimiser, device, iteration):
